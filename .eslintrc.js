@@ -16,32 +16,24 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    'react-hooks',
-    '@typescript-eslint',
-  ],
+  plugins: ['react', 'react-hooks', '@typescript-eslint'],
   settings: {
     'import/resolver': {
       typescript: {},
     },
   },
   rules: {
+    'padded-blocks': 'off',
     'no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    'react/jsx-filename-extension': ['warn', {
-      extensions: ['.tsx'],
-    }],
-    'import/extensions': ['error', 'ignorePackages', {
-      ts: 'never',
-      tsx: 'never',
-    }],
+    'react/jsx-filename-extension': ['warn', { extensions: ['.tsx'] }],
+    'import/prefer-default-export': 'off',
+    'import/extensions': ['error', 'ignorePackages', { ts: 'never', tsx: 'never' }],
     '@typescript-eslint/no-use-before-define': ['error'],
-    '@typescript-eslint/explicit-function-return-type': ['error', {
-      allowExpressions: true,
-    }],
+    '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
   },
   ignorePatterns: [
     '**/node_modules',
