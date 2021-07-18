@@ -3,6 +3,7 @@
  */
 import { useContext, useState, useEffect } from 'react';
 import { SocketContext } from '../../Sockets/SocketContext';
+import { ToggleButton } from './ActionsStyles';
 
 export default function ToggleFeedButton(): JSX.Element {
 
@@ -22,12 +23,12 @@ export default function ToggleFeedButton(): JSX.Element {
   }, [subscribedProduct]);
 
   return (
-    <button
+    <ToggleButton
       type="button"
       onClick={toggleFeed}
       disabled={!buttonEnabled}
     >
       Toggle Feed
-    </button>
+    </ToggleButton>
   );
 }

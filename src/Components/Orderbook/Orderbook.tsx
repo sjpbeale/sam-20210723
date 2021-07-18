@@ -3,6 +3,7 @@
  */
 import { useContext, useState, useEffect } from 'react';
 import { SocketContext } from '../../Sockets/SocketContext';
+import { BookContainer, BookHeader } from './BookStyles';
 import BookTitle from './BookTitle';
 import BookGrouping from './BookGrouping';
 
@@ -22,16 +23,16 @@ export default function Orderbook(): JSX.Element {
   }, [socketState, socketError]);
 
   return (
-    <div className="order-book">
-      <div className="book-header">
+    <BookContainer>
+      <BookHeader hasError={socketError}>
         <BookTitle
           productName={subscribedProduct ?? ''}
           connectionState={connectionMessage}
         />
         <BookGrouping />
 
-      </div>
+      </BookHeader>
 
-    </div>
+    </BookContainer>
   );
 }

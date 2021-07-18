@@ -3,6 +3,7 @@
  */
 import { useContext, useState, useEffect } from 'react';
 import { SocketContext } from '../../Sockets/SocketContext';
+import { KillButton } from './ActionsStyles';
 
 export default function KillFeedButton(): JSX.Element {
 
@@ -19,12 +20,12 @@ export default function KillFeedButton(): JSX.Element {
   }, [subscribedProduct]);
 
   return (
-    <button
+    <KillButton
       type="button"
       onClick={killFeed}
       disabled={!buttonEnabled}
     >
       Kill Feed
-    </button>
+    </KillButton>
   );
 }
