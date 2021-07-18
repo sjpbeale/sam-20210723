@@ -1,17 +1,26 @@
 import React from 'react';
-import './App.css';
+import styled from 'styled-components';
+import GlobalStyle from './Styles/Global';
 import Orderbook from './Components/Orderbook/Orderbook';
 import ToggleFeedButton from './Components/Actions/ToggleFeedButton';
 import KillFeedButton from './Components/Actions/KillFeedButton';
 
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 function App(): JSX.Element {
 
   return (
-    <div className="App">
+    <>
+      <GlobalStyle />
       <Orderbook />
-      <ToggleFeedButton />
-      <KillFeedButton />
-    </div>
+      <ActionsContainer>
+        <ToggleFeedButton />
+        <KillFeedButton />
+      </ActionsContainer>
+    </>
   );
 }
 
