@@ -2,7 +2,7 @@
  * Socket Context
  */
 import {
-  createContext, useState, useEffect, ReactNode,
+  createContext, useState, useEffect, useReducer, ReactNode,
 } from 'react';
 
 // Socket Settings
@@ -13,10 +13,26 @@ const feedId = 'book_ui_1';
 
 const SocketContext = createContext({});
 
+type SubscriptionState = {
+  subscribe: string,
+  unsubscribe: string,
+};
+
+const switchProducts = (state: SubscriptionState, subscribe: string): SubscriptionState => ({
+  subscribe,
+  unsubscribe: state.subscribe,
+});
+
 const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+
   // Set States
-  const [socketState, setSocketState] = useState<number>(WebSocket.CLOSED);
-  const [socketError, setSocketError] = useState<boolean>(false);
+  const [socketState, setSocketState] = useState(WebSocket.CLOSED);
+  const [socketError, setSocketError] = useState(false);
+  const [subscription, subscribe] = useReducer(switchProducts, {
+    subscribe: 'PI_XBTUSD',
+    unsubscribe: '',
+  });
+  const [message, setMessage] = useState({});
   const [forceError, setForceError] = useState(false);
 
   useEffect(() => {
@@ -37,10 +53,60 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
       setSocketError(true);
     };
 
+    let subscriptions: Array<string> = [];
+
+    socket.addEventListener('message', (e: MessageEvent) => {
+
+      const data = JSON.parse(e.data.toString());
+
+      const {
+        product_id: productId,
+        product_ids: productIds,
+        event,
+      } = data;
+
+      // Handler Subscribe / Unsubscribe
+      if (event === 'subscribed') {
+        subscriptions = [...new Set([
+          ...subscriptions,
+          ...productIds,
+        ])];
+      } else if (event === 'unsubscribed') {
+        subscriptions = subscriptions.filter((id) => !productIds.includes(id));
+      }
+
+      if (subscriptions.includes(productId)) {
+        setMessage(data);
+      }
+    });
+
     return () => {
       socket.close();
     };
   }, [forceError]);
+
+  useEffect(() => {
+    if (socketState === WebSocket.OPEN) {
+
+      // Unsubscribe
+      if (subscription.unsubscribe) {
+        socket.send(JSON.stringify({
+          event: 'unsubscribe',
+          feed: feedId,
+          product_ids: [subscription.unsubscribe],
+        }));
+      }
+
+      // Subscribe
+      if (subscription.subscribe) {
+        socket.send(JSON.stringify({
+          event: 'subscribe',
+          feed: feedId,
+          product_ids: [subscription.subscribe],
+        }));
+      }
+    }
+  }, [socketState, subscription]);
 
   return (
     <SocketContext.Provider
@@ -49,6 +115,8 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         socketError,
         forceError,
         setForceError,
+        subscribe,
+        message,
       }}
     >
       {children}
