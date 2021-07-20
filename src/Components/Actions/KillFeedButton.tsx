@@ -1,14 +1,17 @@
 /**
  * Kill Feed Button
  */
-import { useContext, useState, useEffect } from 'react';
-import { SocketContext } from '../../Sockets/SocketContext';
+import { useState, useEffect } from 'react';
+import { useSocket } from '../../Sockets/SocketContext';
 import { KillButton } from './ActionsStyles';
 
 export default function KillFeedButton(): JSX.Element {
 
-  const socketContext = useContext(SocketContext);
-  const { subscribedProduct, forceError, setForceError } = socketContext;
+  const {
+    subscribedProduct,
+    forceError,
+    setForceError,
+  } = useSocket();
 
   const [buttonEnabled, setButtonEnabled] = useState(false);
 

@@ -1,14 +1,17 @@
 /**
  * Toggle Feed Button
  */
-import { useContext, useState, useEffect } from 'react';
-import { SocketContext } from '../../Sockets/SocketContext';
+import { useState, useEffect } from 'react';
+import { useSocket } from '../../Sockets/SocketContext';
 import { ToggleButton } from './ActionsStyles';
 
 export default function ToggleFeedButton(): JSX.Element {
 
-  const socketContext = useContext(SocketContext);
-  const { subscribedProduct, toggleSubscription } = socketContext;
+  const {
+    toggleSubscription,
+    subscribedProduct,
+    socketError,
+  } = useSocket();
 
   const [buttonEnabled, setButtonEnabled] = useState(false);
 
@@ -19,8 +22,8 @@ export default function ToggleFeedButton(): JSX.Element {
 
   // Enable toggle if subscribed
   useEffect(() => {
-    setButtonEnabled(!!subscribedProduct);
-  }, [subscribedProduct]);
+    setButtonEnabled(!!subscribedProduct && !socketError);
+  }, [subscribedProduct, socketError]);
 
   return (
     <ToggleButton

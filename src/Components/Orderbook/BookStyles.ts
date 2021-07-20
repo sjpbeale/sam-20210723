@@ -6,18 +6,28 @@ import styled from 'styled-components';
 export const BookContainer = styled.div`
   margin: 5px auto;
   max-width: 1024px;
+  color: white;
+`;
+
+interface BookSectionProps {
+  flexDirection?: string;
+  justifyContent?: string;
+}
+
+export const BookSection = styled.div<BookSectionProps>`
+  display: flex;
+  flex-direction: ${(props) => props.flexDirection ?? 'row'};
+  justify-content:  ${(props) => props.justifyContent ?? 'space-between'};
+  padding: 8px;
+  margin-bottom: 2px;
+  background-color: black;
 `;
 
 interface BookHeaderProps {
   readonly hasError?: boolean;
 }
 
-export const BookHeader = styled.div<BookHeaderProps>`
-  display: flex;
-  justify-content: space-between;
-  background-color: black;
-  color: white;
-  padding: 8px;
+export const BookHeader = styled(BookSection)<BookHeaderProps>`
   font-weight: bold;
   font-size: 16px;
 

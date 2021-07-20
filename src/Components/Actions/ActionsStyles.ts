@@ -14,6 +14,12 @@ export const Button = styled.button`
 
 export const ToggleButton = styled(Button)`
   background-color: purple;
+
+  &:disabled {
+    background-color: dimgrey;
+    opacity: 0.8;
+    pointer-events: none;
+  }
 `;
 
 export const KillButton = styled(Button)`

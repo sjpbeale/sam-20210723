@@ -3,12 +3,12 @@
  */
 import * as React from 'react';
 
-type BookTitleProps = {
+interface BookTitleProps {
   productName: string,
-  connectionState: string
-};
+  connectionError: boolean
+}
 
-const BookTitle = ({ productName, connectionState }: BookTitleProps): JSX.Element => {
+const BookTitle = ({ productName, connectionError }: BookTitleProps): JSX.Element => {
 
   const productText = productName.replace(/PI_(\w{3})(\w{3})/, (match, first, second) => {
     let text = '';
@@ -21,7 +21,7 @@ const BookTitle = ({ productName, connectionState }: BookTitleProps): JSX.Elemen
   return (
     <div>
       Order Book
-      <span>{connectionState ?? productText}</span>
+      <span>{connectionError ? 'Connection Issues..' : productText}</span>
     </div>
   );
 };
