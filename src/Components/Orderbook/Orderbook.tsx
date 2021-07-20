@@ -3,6 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useSocket } from '../../Sockets/SocketContext';
+import { BookProvider } from './BookContext';
 import {
   BookContainer,
   BookHeader,
@@ -16,17 +17,19 @@ export default function Orderbook(): JSX.Element {
 
   return (
     <BookContainer>
+      <BookProvider>
 
-      <BookHeader hasError={socketError}>
-        <BookTitle
-          productName={subscribedProduct ?? ''}
-          connectionError={socketError ?? false}
-        />
-        <BookGrouping
-          isEnabled={!socketError && !!subscribedProduct}
-        />
-      </BookHeader>
+        <BookHeader hasError={socketError}>
+          <BookTitle
+            productName={subscribedProduct ?? ''}
+            connectionError={socketError ?? false}
+          />
+          <BookGrouping
+            isEnabled={!socketError && !!subscribedProduct}
+          />
+        </BookHeader>
 
+      </BookProvider>
     </BookContainer>
   );
 }
