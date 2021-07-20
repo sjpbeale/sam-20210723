@@ -3,6 +3,7 @@
  */
 import {
   createContext,
+  useContext,
   useState,
   useEffect,
   useReducer,
@@ -15,39 +16,41 @@ const socketUrl = 'wss://www.cryptofacilities.com/ws/v1';
 const failUrl = 'wss://www.cryptofacilities.com';
 const feedId = 'book_ui_1';
 
-interface SocketContextInterface {
-  socketState: number;
-  socketError: boolean;
-  subscribedProduct: string,
-  toggleSubscription: () => void;
-  message: any;
-  forceError: boolean;
-  setForceError: (error: boolean) => void;
-}
-
-const SocketContext = createContext<Partial<SocketContextInterface>>({});
-
 type SubscriptionState = {
   subscribe: string,
   unsubscribe: string,
 };
 
+// Switch products reducer
 const switchProducts = (state: SubscriptionState, subscribe: string): SubscriptionState => ({
   subscribe,
   unsubscribe: state.subscribe,
 });
 
+interface SocketContextInterface {
+  socket: WebSocket;
+  socketState: number;
+  socketError: boolean;
+  subscribedProduct: string,
+  toggleSubscription: () => void;
+  forceError: boolean;
+  setForceError: (error: boolean) => void;
+}
+
+// Socket Context
+const SocketContext = createContext<Partial<SocketContextInterface>>({});
+
+// Socket Provider
 const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
 
   // Set States
   const [socketState, setSocketState] = useState(WebSocket.CLOSED);
   const [socketError, setSocketError] = useState(false);
+  const [subscribedProduct, setSubscribedProduct] = useState('');
   const [subscription, subscribe] = useReducer(switchProducts, {
     subscribe: 'PI_XBTUSD',
     unsubscribe: 'PI_ETHUSD',
   });
-  const [subscribedProduct, setSubscribedProduct] = useState('');
-  const [message, setMessage] = useState({});
   const [forceError, setForceError] = useState(false);
 
   // Toggle Subscription
@@ -72,38 +75,22 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
 
     socket.onerror = () => {
       setSocketError(true);
+      socket.close();
     };
 
-    let subscriptions: Array<string> = [];
+    socket.onmessage = (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data);
 
-    socket.addEventListener('message', (e: MessageEvent) => {
+        // Set on subscribe to update that we have switched
+        if (data.event === 'subscribed') {
+          setSubscribedProduct(data.product_ids[0] ?? '');
+        }
 
-      const data = JSON.parse(e.data.toString());
-
-      const {
-        product_id: productId,
-        product_ids: productIds,
-        event,
-      } = data;
-
-      // Handler Subscribe / Unsubscribe
-      if (event === 'subscribed') {
-
-        subscriptions = [...new Set([
-          ...subscriptions,
-          ...productIds,
-        ])];
-
-        setSubscribedProduct(productIds[0]);
-
-      } else if (event === 'unsubscribed') {
-        subscriptions = subscriptions.filter((id) => !productIds.includes(id));
+      } catch (err) {
+        setSocketError(true);
       }
-
-      if (subscriptions.includes(productId)) {
-        setMessage(data);
-      }
-    });
+    };
 
     return () => {
       socket.close();
@@ -117,6 +104,7 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
       // Unsubscribe
       if (subscription.unsubscribe) {
 
+        // Set early to update that we are switching
         setSubscribedProduct('');
 
         socket.send(JSON.stringify({
@@ -140,11 +128,11 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
     <SocketContext.Provider
       value={{
+        socket,
         socketState,
         socketError,
         toggleSubscription,
         subscribedProduct,
-        message,
         forceError,
         setForceError,
       }}
@@ -154,4 +142,17 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   );
 };
 
-export { SocketContext, SocketProvider };
+// Socket Consumer Hook
+const useSocket = (): Partial<SocketContextInterface> => {
+  const context = useContext(SocketContext);
+  if (context === undefined) {
+    throw new Error('useSocket must be with SocketProvider');
+  }
+  return context;
+};
+
+export {
+  SocketContext,
+  SocketProvider,
+  useSocket,
+};
