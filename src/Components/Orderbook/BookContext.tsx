@@ -155,6 +155,9 @@ const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JS
     levels: 0,
   });
 
+  // Current Product
+  const productId = React.useRef<string>('');
+
   // Order Update Id to hold RAF id
   const ordersUpdateId = React.useRef<number>(0);
 
@@ -198,8 +201,6 @@ const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JS
 
   useEffect(() => {
 
-    let current = '';
-
     const handleUpdates = (e: MessageEvent): void => {
       try {
         const data = JSON.parse(e.data);
@@ -213,12 +214,12 @@ const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JS
 
         // Ensure current subscribed id
         if (event === 'unsubscribed') {
-          current = '';
+          productId.current = '';
         } else if (event === 'subscribed') {
-          current = ids[0] ?? '';
+          productId.current = ids[0] ?? '';
         }
 
-        if (id && id === current) {
+        if (id && id === productId.current) {
 
           if (feed.includes('_snapshot')) {
 
@@ -258,14 +259,15 @@ const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JS
           }
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
     // Add / Remove listeners
     socket?.addEventListener('message', handleUpdates);
+    return () => socket?.removeEventListener('message', handleUpdates);
 
-  }, []);
+  }, [socket, group]);
 
   return (
     <BookContext.Provider
