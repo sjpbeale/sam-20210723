@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 export const BookContainer = styled.div`
   margin: 5px auto;
-  max-width: 1024px;
+  max-width: 768px;
   color: white;
 `;
 
@@ -50,7 +50,7 @@ export const Select = styled.select`
 `;
 
 export const BookContent = styled(BookSection)<HasErrorProps>`
-  font-size: 12px;
+  font-size: 14px;
 
   > div {
     flex: 1;
@@ -92,7 +92,7 @@ export const BookContent = styled(BookSection)<HasErrorProps>`
 
     &.order-buy {
       .price {
-        color: red;
+        color: ${(props) => (props.isMobile ? 'red' : 'limegreen')};
       }
     }
   }

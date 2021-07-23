@@ -11,7 +11,7 @@ const ActionsContainer = styled.div`
   padding: 6px 0 15px;
 `;
 
-const isMobileResolution = ():boolean => window.innerWidth < 768;
+const isMobileResolution = ():boolean => window.innerWidth < 576;
 
 function App(): JSX.Element {
 
