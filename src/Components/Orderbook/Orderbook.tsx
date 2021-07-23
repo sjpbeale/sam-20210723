@@ -12,11 +12,13 @@ import BookTitle from './BookTitle';
 import BookGrouping from './BookGrouping';
 import BookDisplay from './BookDisplay';
 
-export default function Orderbook(): JSX.Element {
+interface IOrderbook {
+  isMobile: boolean;
+}
+
+export default function Orderbook({ isMobile }: IOrderbook): JSX.Element {
 
   const { socket, subscribedProduct, socketError } = useSocket();
-
-  const isMobile = false;
 
   return (
     <BookContainer>
