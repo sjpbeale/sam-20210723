@@ -1,6 +1,7 @@
 /**
  * Order book row
  */
+import * as React from 'react';
 import * as BookTypes from './BookTypes';
 import { OrderRow } from './BookStyles';
 
@@ -53,4 +54,4 @@ const BookRow = ({
   );
 };
 
-export default BookRow;
+export default React.memo(BookRow);

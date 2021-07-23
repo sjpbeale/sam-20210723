@@ -22,7 +22,7 @@ export default function Orderbook({ isMobile }: IOrderbook): JSX.Element {
 
   return (
     <BookContainer>
-      <BookProvider socket={socket}>
+      <BookProvider socket={socket} mobile={isMobile}>
 
         <BookHeader hasError={socketError}>
           <BookTitle

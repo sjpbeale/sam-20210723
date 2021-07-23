@@ -23,7 +23,7 @@ export const BookSection = styled.div<FlexProps & MobileProps>`
   flex-direction: ${(props) => props.flexDirection ?? 'row'};
   justify-content: ${(props) => props.justifyContent ?? 'space-between'};
   padding: 8px;
-  margin-bottom: 2px;
+  margin: 0px 5px 2px;
   background-color: black;
 `;
 

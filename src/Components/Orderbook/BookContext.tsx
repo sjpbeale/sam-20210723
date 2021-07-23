@@ -110,6 +110,15 @@ const processOrders = (
   const bids = groupOrders(orders.bids, orders.group);
   const asks = groupOrders(orders.asks, orders.group);
 
+  // Limit display row amount
+  // @note cuts largest totals off / maybe should be least
+  if (bids.length > orders.limit) {
+    bids.length = orders.limit;
+  }
+  if (asks.length > orders.limit) {
+    asks.length = orders.limit;
+  }
+
   // Highest total
   const highestTotal = Math.max(
     [...new Map(bids).values()].reduce((a, b) => (a + b), 0),
@@ -124,7 +133,7 @@ const processOrders = (
 
 const BookContext = React.createContext<Partial<BookTypes.IBookContext>>({});
 
-const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Element => {
+const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JSX.Element => {
 
   // Context states
   const [group, setGroup] = useState<number>(0.5);
@@ -154,21 +163,26 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
   useEffect(() => {
 
     // Indicate update in useEffect props
-    let groupUpdated = true;
+    let dependecyUpdate = true;
 
     const testUpdate = (): void => {
 
       const { orders: bids, hasUpdate: bidsUpdate } = bidsStore.current;
       const { orders: asks, hasUpdate: asksUpdate } = asksStore.current;
 
-      if (bidsUpdate || asksUpdate || groupUpdated) {
+      if (bidsUpdate || asksUpdate || dependecyUpdate) {
 
         // Reset update state
         bidsStore.current.hasUpdate = false;
         asksStore.current.hasUpdate = false;
-        groupUpdated = false;
+        dependecyUpdate = false;
 
-        setBookData({ bids, asks, group });
+        setBookData({
+          bids,
+          asks,
+          group,
+          limit: mobile ? 13 : 15,
+        });
       }
 
       // Request new animation frame
@@ -180,7 +194,7 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
     return () => {
       cancelAnimationFrame(ordersUpdateId.current);
     };
-  }, [group]);
+  }, [group, mobile]);
 
   useEffect(() => {
 

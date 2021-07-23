@@ -8,6 +8,7 @@ import KillFeedButton from './Components/Actions/KillFeedButton';
 const ActionsContainer = styled.div`
   display: flex;
   justify-content: center;
+  padding: 6px 0 15px;
 `;
 
 const isMobileResolution = ():boolean => window.innerWidth < 768;
