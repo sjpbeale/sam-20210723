@@ -50,7 +50,7 @@ export const Select = styled.select`
 `;
 
 export const BookContent = styled(BookSection)<HasErrorProps>`
-  font-size: 16px;
+  font-size: 12px;
 
   > div {
     flex: 1;
@@ -111,7 +111,7 @@ export const OrderRow = styled.div`
 
   > div {
     flex: 1;
-    padding: 2px 5%;
+    padding: 2px 8% 2px 2%;
     text-align: right;
   }
   > div:first-child {
