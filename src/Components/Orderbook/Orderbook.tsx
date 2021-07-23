@@ -32,7 +32,7 @@ export default function Orderbook(): JSX.Element {
           />
         </BookHeader>
 
-        <BookContent hasError={socketError} flexDirection={isMobile ? 'column-reverse' : 'row'}>
+        <BookContent isMobile={isMobile} hasError={socketError} flexDirection={isMobile ? 'column-reverse' : 'row'}>
           <BookDisplay
             type="buy"
             isMobile={isMobile}

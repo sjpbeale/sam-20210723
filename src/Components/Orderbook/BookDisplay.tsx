@@ -29,23 +29,22 @@ const BookDisplay = ({ type, isMobile = true, invertData = false }: IBookDisplay
     }
   }, [bookData, type]);
 
-  const columnDirection = (): 'row' | 'row-reverse' => (isMobile || (!isMobile && type === 'sell') ? 'row' : 'row-reverse');
-
   return (
     <div>
-      <OrderRow flexDirection={columnDirection()}>
-        <div>Price</div>
-        <div>Size</div>
-        <div>Total</div>
-      </OrderRow>
-      <OrderList className="order-list" flexDirection={invertData ? 'column-reverse' : 'column'}>
+      <OrderList className={`order-title order-${type}`}>
+        <OrderRow>
+          <div>Price</div>
+          <div>Size</div>
+          <div>Total</div>
+        </OrderRow>
+      </OrderList>
+      <OrderList className={`order-list order-${type}`} flexDirection={invertData ? 'column-reverse' : 'column'}>
         {orders.map((order) => (
           <BookRow
             key={order.price}
             data={order}
             bgColor={type === 'sell' ? 'green' : 'red'}
             bgDirection={type === 'sell' && !isMobile ? 'right' : 'left'}
-            columnDirection={columnDirection()}
           />
         ))}
       </OrderList>

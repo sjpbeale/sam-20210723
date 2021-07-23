@@ -14,10 +14,14 @@ interface FlexProps {
   justifyContent?: string;
 }
 
-export const BookSection = styled.div<FlexProps>`
+interface MobileProps {
+  isMobile?: boolean;
+}
+
+export const BookSection = styled.div<FlexProps & MobileProps>`
   display: flex;
   flex-direction: ${(props) => props.flexDirection ?? 'row'};
-  justify-content:  ${(props) => props.justifyContent ?? 'space-between'};
+  justify-content: ${(props) => props.justifyContent ?? 'space-between'};
   padding: 8px;
   margin-bottom: 2px;
   background-color: black;
@@ -50,9 +54,39 @@ export const BookContent = styled(BookSection)<HasErrorProps>`
     flex: 1;
   }
 
+  .order-title,
+  .order-list {
+    &.order-buy {
+      > div {
+        flex-direction: ${(props) => (props.isMobile ? 'row' : 'row-reverse')};
+      }
+    }
+
+    &.order-sell {
+      > div {
+        flex-direction: 'row';
+      }
+    }
+  }
+
+  .order-title.order-buy {
+    visibility: ${(props) => (props.isMobile ? 'hidden' : 'visible')};
+  }
+
   .order-list {
     transition: opacity 0.3s;
     opacity: ${(props) => (props.hasError ? 0.6 : 1)};
+
+    .price {
+      opacity: 0.8;
+      color: limegreen;
+    }
+
+    &.order-buy {
+      .price {
+        color: red;
+      }
+    }
   }
 `;
 
@@ -63,15 +97,8 @@ export const OrderList = styled.div<FlexProps>`
   text-align: center;
 `;
 
-type OrderRowProps = FlexProps & {
-  background?: string,
-};
-
-export const OrderRow = styled.div<OrderRowProps>`
+export const OrderRow = styled.div`
   display: flex;
-  flex-direction: ${(props) => props.flexDirection ?? 'row'};
-  justify-content: ${(props) => props.justifyContent ?? 'space-between'};
-  background: ${(props) => props.background ?? 'black'};
   text-transform: uppercase;
 
   > div {

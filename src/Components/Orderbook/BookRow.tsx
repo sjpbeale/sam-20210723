@@ -8,11 +8,10 @@ interface IBookRow {
   data: BookTypes.ProcessedOrder;
   bgColor: 'green' | 'red';
   bgDirection: 'left' | 'right';
-  columnDirection: 'row' | 'row-reverse';
 }
 
 const BookRow = ({
-  data, bgColor, bgDirection, columnDirection,
+  data, bgColor, bgDirection,
 }: IBookRow): JSX.Element => {
 
   const { percent, ...order } = data;
@@ -40,8 +39,7 @@ const BookRow = ({
 
   return (
     <OrderRow
-      background={backgroundPercent()}
-      flexDirection={columnDirection}
+      style={{ background: backgroundPercent() }}
     >
       {Object.entries(order).map(([name, value]) => (
         <div
