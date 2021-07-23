@@ -1,23 +1,26 @@
 /**
  * Orderbook component
  */
-import { useState, useEffect } from 'react';
 import { useSocket } from '../../Sockets/SocketContext';
 import { BookProvider } from './BookContext';
 import {
   BookContainer,
   BookHeader,
+  BookContent,
 } from './BookStyles';
 import BookTitle from './BookTitle';
 import BookGrouping from './BookGrouping';
+import BookDisplay from './BookDisplay';
 
 export default function Orderbook(): JSX.Element {
 
-  const { subscribedProduct, socketError } = useSocket();
+  const { socket, subscribedProduct, socketError } = useSocket();
+
+  const isMobile = true;
 
   return (
     <BookContainer>
-      <BookProvider>
+      <BookProvider socket={socket}>
 
         <BookHeader hasError={socketError}>
           <BookTitle
@@ -28,6 +31,18 @@ export default function Orderbook(): JSX.Element {
             isEnabled={!socketError && !!subscribedProduct}
           />
         </BookHeader>
+
+        <BookContent flexDirection={isMobile ? 'column-reverse' : 'row'}>
+          <BookDisplay
+            type="buy"
+            isMobile={isMobile}
+          />
+          <BookDisplay
+            type="sell"
+            isMobile={isMobile}
+            invertData={isMobile}
+          />
+        </BookContent>
 
       </BookProvider>
     </BookContainer>

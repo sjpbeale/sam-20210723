@@ -9,12 +9,12 @@ export const BookContainer = styled.div`
   color: white;
 `;
 
-interface BookSectionProps {
+interface FlexProps {
   flexDirection?: string;
   justifyContent?: string;
 }
 
-export const BookSection = styled.div<BookSectionProps>`
+export const BookSection = styled.div<FlexProps>`
   display: flex;
   flex-direction: ${(props) => props.flexDirection ?? 'row'};
   justify-content:  ${(props) => props.justifyContent ?? 'space-between'};
@@ -43,4 +43,45 @@ export const Select = styled.select`
   color: white;
   padding: 2px;
   border-radius: 2px;
+`;
+
+export const BookContent = styled(BookSection)`
+  > div {
+    flex: 1;
+  }
+`;
+
+export const OrderList = styled.div<FlexProps>`
+  display: flex;
+  flex-direction: ${(props) => props.flexDirection ?? 'column'};
+  flex-grow: 1;
+  text-align: center;
+`;
+
+type OrderRowProps = FlexProps & {
+  background?: string,
+};
+
+export const OrderRow = styled.div<OrderRowProps>`
+  display: flex;
+  flex-direction: ${(props) => props.flexDirection ?? 'row'};
+  justify-content: ${(props) => props.justifyContent ?? 'space-between'};
+  background: ${(props) => props.background ?? 'black'};
+  text-transform: uppercase;
+
+  > div {
+    flex: 1;
+    padding: 2px 5%;
+    text-align: right;
+  }
+  > div:first-child {
+    padding-left: 0;
+  }
+  > div:last-child {
+    padding-right: 10%;
+  }
+
+  .price {
+    color: green;
+  }
 `;
