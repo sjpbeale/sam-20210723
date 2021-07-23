@@ -24,7 +24,7 @@ const BookRow = ({
 
     if (bgColor && bgDirection && percent) {
 
-      const rgba = bgColor === 'red' ? 'rgba(100, 40, 40, 0.3)' : 'rgba(40, 100, 40, 0.3)';
+      const rgba = bgColor === 'red' ? 'rgba(62, 33, 44, 0.8)' : 'rgba(17, 56, 57, 0.8)';
 
       const gradientProps = [
         `to ${bgDirection}`,

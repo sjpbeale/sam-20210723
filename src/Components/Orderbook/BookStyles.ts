@@ -50,6 +50,8 @@ export const Select = styled.select`
 `;
 
 export const BookContent = styled(BookSection)<HasErrorProps>`
+  font-size: 16px;
+
   > div {
     flex: 1;
   }
@@ -69,8 +71,14 @@ export const BookContent = styled(BookSection)<HasErrorProps>`
     }
   }
 
-  .order-title.order-buy {
-    visibility: ${(props) => (props.isMobile ? 'hidden' : 'visible')};
+  .order-title {
+    color: grey;
+    font-weight: bold;
+    margin-bottom: 5px;
+
+    &.order-buy {
+      visibility: ${(props) => (props.isMobile ? 'hidden' : 'visible')};
+    }
   }
 
   .order-list {
@@ -111,9 +119,5 @@ export const OrderRow = styled.div`
   }
   > div:last-child {
     padding-right: 10%;
-  }
-
-  .price {
-    color: green;
   }
 `;
