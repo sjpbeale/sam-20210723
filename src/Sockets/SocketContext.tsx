@@ -9,11 +9,12 @@ import {
   useReducer,
   ReactNode,
 } from 'react';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 
 // Socket Settings
-let socket: WebSocket;
-const socketUrl = 'wss://www.cryptofacilities.com/ws/v1';
-const failUrl = 'wss://www.cryptofacilities.com';
+const socket = new ReconnectingWebSocket('wss://www.cryptofacilities.com/ws/v1', [], {
+  startClosed: true,
+});
 const feedId = 'book_ui_1';
 
 type SubscriptionState = {
@@ -28,7 +29,7 @@ const switchProducts = (state: SubscriptionState, subscribe: string): Subscripti
 });
 
 interface SocketContextInterface {
-  socket: WebSocket;
+  socket: ReconnectingWebSocket;
   socketState: number;
   socketError: boolean;
   subscribedProduct: string,
@@ -44,7 +45,7 @@ const SocketContext = createContext<Partial<SocketContextInterface>>({});
 const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
 
   // Set States
-  const [socketState, setSocketState] = useState(WebSocket.CLOSED);
+  const [socketState, setSocketState] = useState(socket.readyState);
   const [socketError, setSocketError] = useState(false);
   const [subscribedProduct, setSubscribedProduct] = useState('');
   const [subscription, subscribe] = useReducer(switchProducts, {
@@ -61,21 +62,13 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   // Handle socket events
   useEffect(() => {
 
-    // New socket connection
-    socket = new WebSocket(forceError ? failUrl : socketUrl);
-
-    socket.onopen = () => {
+    socket.onopen = (): void => {
       setSocketError(false);
       setSocketState(socket.readyState);
     };
 
-    socket.onclose = () => {
+    socket.onclose = (): void => {
       setSocketState(socket.readyState);
-    };
-
-    socket.onerror = () => {
-      setSocketError(true);
-      socket.close();
     };
 
     socket.onmessage = (e: MessageEvent) => {
@@ -92,14 +85,16 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
       }
     };
 
-    return () => {
-      socket.close();
-    };
-  }, [forceError]);
+    // Event listener as reconnecting onerror not triggering
+    socket.addEventListener('error', () => {
+      setSocketError(true);
+    });
+
+  }, []);
 
   // Send unsubscribe / subscribe
   useEffect(() => {
-    if (socketState === WebSocket.OPEN) {
+    if (socketState === WebSocket.OPEN && !socketError) {
 
       // Unsubscribe
       if (subscription.unsubscribe) {
@@ -123,7 +118,20 @@ const SocketProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         }));
       }
     }
-  }, [socketState, subscription]);
+  }, [socketState, subscription, socketError]);
+
+  // Initial Connect / Force Error
+  useEffect(() => {
+
+    // Trigger error from socket
+    if (forceError) {
+      socket.dispatchEvent(new ErrorEvent('error'));
+      socket.close();
+    } else {
+      socket.reconnect();
+    }
+
+  }, [forceError]);
 
   return (
     <SocketContext.Provider

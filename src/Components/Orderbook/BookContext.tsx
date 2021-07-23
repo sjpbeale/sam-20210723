@@ -198,8 +198,6 @@ const BookProvider = ({ socket, mobile, children }: BookTypes.IBookProvider): JS
 
   useEffect(() => {
 
-    console.log('BOOK CONTEXT SOCKET HANDLER');
-
     let current = '';
 
     const handleUpdates = (e: MessageEvent): void => {
