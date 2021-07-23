@@ -18,6 +18,7 @@ export type ProcessedOrder = {
   price: number,
   size: number,
   total: number,
+  percent: number,
 };
 export type ProcessedOrders = ProcessedOrder[];
 
@@ -37,6 +38,7 @@ export interface IBookContext {
   group: number;
   setGroup: (group: number) => void;
   groupOptions: number[],
+  bookData: ProcessedState,
 }
 
 // Book Context Provider

@@ -83,7 +83,7 @@ const groupOrders = (orders: BookTypes.Orders, group: number): BookTypes.Orders 
   return [...orderMap];
 };
 
-const formatOrders = (orders: BookTypes.Orders): BookTypes.ProcessedOrders => {
+const formatOrders = (orders: BookTypes.Orders, bookTotal: number): BookTypes.ProcessedOrders => {
 
   let total = 0;
 
@@ -95,6 +95,7 @@ const formatOrders = (orders: BookTypes.Orders): BookTypes.ProcessedOrders => {
       price,
       size,
       total,
+      percent: Math.round((total / bookTotal) * 100),
     };
   });
 };
@@ -109,9 +110,15 @@ const processOrders = (
   const bids = groupOrders(orders.bids, orders.group);
   const asks = groupOrders(orders.asks, orders.group);
 
+  // Highest total
+  const highestTotal = Math.max(
+    [...new Map(bids).values()].reduce((a, b) => (a + b), 0),
+    [...new Map(asks).values()].reduce((a, b) => (a + b), 0),
+  );
+
   return {
-    bids: formatOrders(bids),
-    asks: formatOrders(asks),
+    bids: formatOrders(bids, highestTotal),
+    asks: formatOrders(asks, highestTotal),
   };
 };
 
@@ -122,7 +129,7 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
   // Context states
   const [group, setGroup] = useState<number>(0.5);
   const [groupOptions, setGroupOptions] = useState<number[]>([]);
-  const [orders, setOrders] = useReducer(processOrders, {
+  const [bookData, setBookData] = useReducer(processOrders, {
     bids: [],
     asks: [],
   });
@@ -141,12 +148,6 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
 
   // Order Update Id to hold RAF id
   const ordersUpdateId = React.useRef<number>(0);
-
-  useEffect(() => {
-
-    console.log('ORDERS UPDATED', orders);
-
-  }, [orders]);
 
   // Update orders with requestAnimationFrame to avoid
   // forcing updates from socket which would not be seen.
@@ -167,7 +168,7 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
         asksStore.current.hasUpdate = false;
         groupUpdated = false;
 
-        setOrders({ bids, asks, group });
+        setBookData({ bids, asks, group });
       }
 
       // Request new animation frame
@@ -260,6 +261,7 @@ const BookProvider = ({ socket, children }: BookTypes.IBookProvider): JSX.Elemen
         group,
         setGroup,
         groupOptions,
+        bookData,
       }}
     >
       {children}
