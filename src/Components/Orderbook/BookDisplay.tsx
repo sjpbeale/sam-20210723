@@ -38,7 +38,7 @@ const BookDisplay = ({ type, isMobile = true, invertData = false }: IBookDisplay
         <div>Size</div>
         <div>Total</div>
       </OrderRow>
-      <OrderList flexDirection={invertData ? 'column-reverse' : 'column'}>
+      <OrderList className="order-list" flexDirection={invertData ? 'column-reverse' : 'column'}>
         {orders.map((order) => (
           <BookRow
             key={order.price}

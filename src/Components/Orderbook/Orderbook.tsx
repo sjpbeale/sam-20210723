@@ -16,7 +16,7 @@ export default function Orderbook(): JSX.Element {
 
   const { socket, subscribedProduct, socketError } = useSocket();
 
-  const isMobile = true;
+  const isMobile = false;
 
   return (
     <BookContainer>
@@ -32,7 +32,7 @@ export default function Orderbook(): JSX.Element {
           />
         </BookHeader>
 
-        <BookContent flexDirection={isMobile ? 'column-reverse' : 'row'}>
+        <BookContent hasError={socketError} flexDirection={isMobile ? 'column-reverse' : 'row'}>
           <BookDisplay
             type="buy"
             isMobile={isMobile}

@@ -23,11 +23,11 @@ export const BookSection = styled.div<FlexProps>`
   background-color: black;
 `;
 
-interface BookHeaderProps {
+interface HasErrorProps {
   readonly hasError?: boolean;
 }
 
-export const BookHeader = styled(BookSection)<BookHeaderProps>`
+export const BookHeader = styled(BookSection)<HasErrorProps>`
   font-weight: bold;
   font-size: 16px;
 
@@ -45,9 +45,14 @@ export const Select = styled.select`
   border-radius: 2px;
 `;
 
-export const BookContent = styled(BookSection)`
+export const BookContent = styled(BookSection)<HasErrorProps>`
   > div {
     flex: 1;
+  }
+
+  .order-list {
+    transition: opacity 0.3s;
+    opacity: ${(props) => (props.hasError ? 0.6 : 1)};
   }
 `;
 
